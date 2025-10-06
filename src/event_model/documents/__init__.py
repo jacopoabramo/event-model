@@ -1,6 +1,6 @@
 # generated in `event_model/generate`
 
-from typing import Tuple, Type, Union
+from typing import Union
 
 from .datum import *  # noqa: F403
 from .datum_page import *  # noqa: F403
@@ -13,20 +13,20 @@ from .run_stop import *  # noqa: F403
 from .stream_datum import *  # noqa: F403
 from .stream_resource import *  # noqa: F403
 
-DocumentType = Union[
-    Type[Datum],  # noqa: F405,
-    Type[DatumPage],  # noqa: F405,
-    Type[Event],  # noqa: F405,
-    Type[EventDescriptor],  # noqa: F405,
-    Type[EventPage],  # noqa: F405,
-    Type[Resource],  # noqa: F405,
-    Type[RunStart],  # noqa: F405,
-    Type[RunStop],  # noqa: F405,
-    Type[StreamDatum],  # noqa: F405,
-    Type[StreamResource],  # noqa: F405,
+DocumentType = Union[  # noqa: UP007
+    type[Datum],  # noqa: F405,
+    type[DatumPage],  # noqa: F405,
+    type[Event],  # noqa: F405,
+    type[EventDescriptor],  # noqa: F405,
+    type[EventPage],  # noqa: F405,
+    type[Resource],  # noqa: F405,
+    type[RunStart],  # noqa: F405,
+    type[RunStop],  # noqa: F405,
+    type[StreamDatum],  # noqa: F405,
+    type[StreamResource],  # noqa: F405,
 ]
 
-Document = Union[
+Document = Union[  # noqa: UP007
     Datum,  # noqa: F405
     DatumPage,  # noqa: F405
     Event,  # noqa: F405
@@ -39,7 +39,7 @@ Document = Union[
     StreamResource,  # noqa: F405
 ]
 
-ALL_DOCUMENTS: Tuple[DocumentType, ...] = (
+ALL_DOCUMENTS: tuple[DocumentType, ...] = (
     Datum,  # noqa: F405
     DatumPage,  # noqa: F405
     Event,  # noqa: F405

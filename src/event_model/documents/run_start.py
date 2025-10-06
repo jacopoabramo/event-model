@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, TypedDict, Union
+from typing import Any, Dict, List, Literal, TypedDict, Union
 
 from typing_extensions import NotRequired
 
@@ -25,12 +25,12 @@ class ConfigurationProjection(TypedDict):
     config_device: str
     config_index: int
     field: str
-    location: NotRequired[str]
+    location: Literal["configuration"]
     """
     Projection comes from configuration fields in the event_descriptor document
     """
     stream: str
-    type: NotRequired[str]
+    type: Literal["linked"]
     """
     Projection is of type linked, a value linked from the data set.
     """
@@ -52,19 +52,19 @@ class Hints(TypedDict):
 
 class LinkedEventProjection(TypedDict):
     field: str
-    location: NotRequired[str]
+    location: Literal["event"]
     """
     Projection comes and event
     """
     stream: str
-    type: NotRequired[str]
+    type: Literal["linked"]
     """
     Projection is of type linked, a value linked from the data set.
     """
 
 
 class StaticProjection(TypedDict):
-    type: NotRequired[str]
+    type: Literal["static"]
     """
     Projection is of type static, a value defined here in the projection
     """
@@ -80,12 +80,12 @@ class CalculatedEventProjection(TypedDict):
     required fields if type is calculated
     """
     field: str
-    location: NotRequired[str]
+    location: Literal["event"]
     """
     Projection comes and event
     """
     stream: str
-    type: NotRequired[str]
+    type: Literal["calculated"]
     """
     Projection is of type calculated, a value that requires calculation.
     """
