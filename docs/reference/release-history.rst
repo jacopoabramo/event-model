@@ -2,6 +2,12 @@
 Release History
 ***************
 
+Unreleased (2025-??-??)
+=======================
+
+* Drop support for Python 3.8 and 3.9.
+* Add support for Python 3.13.
+
 v1.23.1 (2025-08-28)
 ====================
 
