@@ -241,18 +241,18 @@ def generate_init_py(output_root: Path):
 
     document_types = "\n".join(
         [
-            f"    type[{class_name}] |  # noqa: F405,"
-            if i < len(document_class_names) - 1
-            else f"    type[{class_name}]  # noqa: F405"
+            f"    type[{class_name}]  # noqa: F405,"
+            if i == 0
+            else f"    | type[{class_name}]  # noqa: F405"
             for i, class_name in enumerate(document_class_names)
         ]
     )
 
     documents = "\n".join(
         [
-            f"    {class_name} |  # noqa: F405"
-            if i < len(document_class_names) - 1
-            else f"    {class_name}  # noqa: F405"
+            f"    {class_name}  # noqa: F405"
+            if i == 0
+            else f"    | {class_name}  # noqa: F405"
             for i, class_name in enumerate(document_class_names)
         ]
     )
