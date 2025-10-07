@@ -202,17 +202,15 @@ def generate_jsonschema(
 
 GENERATED_INIT_PY = """# generated in `event_model/generate`
 
-from typing import Union
-
 {0}
 
-{1}Type = Union[  # noqa: UP007
+{1}Type = (
 {2}
-]
+)
 
-{1} = Union[  # noqa: UP007
+{1} = (
 {3}
-]
+)
 
 ALL_{4}: tuple[{1}Type, ...] = (
 {5}
@@ -243,13 +241,20 @@ def generate_init_py(output_root: Path):
 
     document_types = "\n".join(
         [
-            f"    type[{class_name}],  # noqa: F405,"
-            for class_name in document_class_names
+            f"    type[{class_name}] |  # noqa: F405,"
+            if i < len(document_class_names) - 1
+            else f"    type[{class_name}]  # noqa: F405"
+            for i, class_name in enumerate(document_class_names)
         ]
     )
 
     documents = "\n".join(
-        [f"    {class_name},  # noqa: F405" for class_name in document_class_names]
+        [
+            f"    {class_name} |  # noqa: F405"
+            if i < len(document_class_names) - 1
+            else f"    {class_name}  # noqa: F405"
+            for i, class_name in enumerate(document_class_names)
+        ]
     )
 
     all_documents = "\n".join(
