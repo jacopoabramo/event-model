@@ -3104,7 +3104,7 @@ class NumpyEncoder(json.JSONEncoder):
                 obj = numpy.asarray(obj)
         except ImportError:
             pass
-        if isinstance(obj, (numpy.generic, numpy.ndarray)):
+        if isinstance(obj, numpy.generic | numpy.ndarray):
             if numpy.isscalar(obj):
                 return obj.item()
             return obj.tolist()
