@@ -270,13 +270,13 @@ class DocumentRouter:
     def resource(self, doc: Resource) -> Resource | None:
         return NotImplemented
 
-    def event(self, doc: Event) -> Event:
+    def event(self, doc: Event) -> Event | None:
         return NotImplemented
 
-    def datum(self, doc: Datum) -> Datum:
+    def datum(self, doc: Datum) -> Datum | None:
         return NotImplemented
 
-    def event_page(self, doc: EventPage) -> EventPage:
+    def event_page(self, doc: EventPage) -> EventPage | None:
         return NotImplemented
 
     def datum_page(self, doc: DatumPage) -> DatumPage | None:
