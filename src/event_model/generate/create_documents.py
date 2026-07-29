@@ -11,9 +11,25 @@ from pydantic.json_schema import GenerateJsonSchema
 
 from event_model.basemodels import ALL_BASEMODELS
 
+#: Path to JSON schema files.
 JSONSCHEMA = Path(__file__).parent.parent / "schemas"
+
+#: Path to TypedDict documents.
 TYPEDDICTS = Path(__file__).parent.parent / "documents"
-TEMPLATES = Path(__file__).parent / "templates"
+
+#: Name each document is emitted under, keyed by module name.
+DOCUMENT_NAMES: dict[str, str] = {
+    "datum": "datum",
+    "datum_page": "datum_page",
+    "event": "event",
+    "event_descriptor": "descriptor",
+    "event_page": "event_page",
+    "resource": "resource",
+    "run_start": "start",
+    "run_stop": "stop",
+    "stream_datum": "stream_datum",
+    "stream_resource": "stream_resource",
+}
 
 
 class SnakeCaseTitleField(GenerateJsonSchema):
@@ -205,41 +221,84 @@ def generate_jsonschema(
 
 GENERATED_INIT_PY = """# generated in `event_model/generate`
 
-{0}
+from typing import Generic, Literal, TypeVar
 
-{1}Type = (
-{2}
+# TODO: import from typing when Python 3.10 support is dropped, where a
+# NamedTuple cannot yet be generic.
+from typing_extensions import NamedTuple
+
+from event_model import DocumentNames
+
+{imports}
+
+NameT = TypeVar("NameT")
+DocT = TypeVar("DocT")
+
+
+class DocWrapper(Generic[NameT, DocT], NamedTuple):
+    \"\"\"Named document wrapper.\"\"\"
+
+    name: NameT
+    \"\"\"The name each document is emitted under.\"\"\"
+
+    doc: DocT
+    \"\"\"The document itself.\"\"\"
+
+
+{singular}Type = (
+{document_types}
 )
 
-{1} = (
-{3}
+{singular} = (
+{documents}
 )
 
-ALL_{4}: tuple[{1}Type, ...] = (
-{5}
+{named_aliases}
+
+Named{singular} = (
+{named_documents}
+)
+
+ALL_{plural}: tuple[{singular}Type, ...] = (
+{all_documents}
 )"""
 
 
 def generate_init_py(output_root: Path):
-    document_names = sorted(
+    module_names = sorted(
         [
             file.stem
             for file in output_root.iterdir()
-            if file.stem != "__init__" and file.suffix == ".py"
+            if not file.stem.startswith("_") and file.suffix == ".py"
         ]
     )
 
     document_class_names = [
-        f"{snake_to_title(document_name)}" for document_name in document_names
+        f"{snake_to_title(module_name)}" for module_name in module_names
     ]
 
     init_py_imports = "\n".join(
         sorted(
             [
-                f"from .{document_name} import *  # noqa: F403"
-                for document_name in document_names
+                f"from .{module_name} import *  # noqa: F403"
+                for module_name in module_names
             ]
         )
+    )
+
+    named_aliases = "\n".join(
+        [
+            f"Named{class_name} = DocWrapper[Literal["
+            f"DocumentNames.{DOCUMENT_NAMES[module_name]}], {class_name}]"
+            "  # noqa: F405"
+            for module_name, class_name in zip(
+                module_names, document_class_names, strict=True
+            )
+        ]
+    )
+
+    named_documents = "    " + "\n    | ".join(
+        [f"Named{class_name}  # noqa: F405" for class_name in document_class_names]
     )
 
     document_types = "    " + "\n    | ".join(
@@ -255,12 +314,14 @@ def generate_init_py(output_root: Path):
     )
 
     init_py = GENERATED_INIT_PY.format(
-        init_py_imports,
-        output_root.name.rstrip("s").title(),
-        document_types,
-        documents,
-        output_root.name.upper(),
-        all_documents,
+        imports=init_py_imports,
+        singular=output_root.name.rstrip("s").title(),
+        plural=output_root.name.upper(),
+        document_types=document_types,
+        documents=documents,
+        named_aliases=named_aliases,
+        named_documents=named_documents,
+        all_documents=all_documents,
     )
 
     with open(output_root / "__init__.py", "w") as f:

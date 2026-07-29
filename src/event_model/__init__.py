@@ -5,6 +5,7 @@ import inspect
 import itertools
 import json
 import os
+import sys
 import threading
 import time as ttime
 import uuid
@@ -13,7 +14,6 @@ import weakref
 from collections import defaultdict, deque
 from collections.abc import Callable, Generator, Iterable, Iterator
 from dataclasses import dataclass
-from enum import Enum
 from typing import (
     Any,
     Literal,
@@ -24,11 +24,35 @@ from typing import (
 import jsonschema
 import numpy
 
-from ._version import __version__
-from .documents.datum import Datum
-from .documents.datum_page import DatumPage
-from .documents.event import Event, PartialEvent
-from .documents.event_descriptor import (
+# TODO: remove backport when Python 3.10 support is dropped
+if sys.version_info >= (3, 11):
+    from enum import StrEnum
+else:
+    from ._strenum_backport import StrEnum
+
+
+class DocumentNames(StrEnum):
+    stop = "stop"
+    start = "start"
+    descriptor = "descriptor"
+    event = "event"
+    datum = "datum"
+    resource = "resource"
+    event_page = "event_page"
+    datum_page = "datum_page"
+    stream_resource = "stream_resource"
+    stream_datum = "stream_datum"
+    bulk_datum = "bulk_datum"  # deprecated
+    bulk_events = "bulk_events"  # deprecated
+
+
+# Imported below DocumentNames because the generated documents package reads it
+# back off this module while this module is still initialising.
+from ._version import __version__  # noqa: E402
+from .documents.datum import Datum  # noqa: E402
+from .documents.datum_page import DatumPage  # noqa: E402
+from .documents.event import Event, PartialEvent  # noqa: E402
+from .documents.event_descriptor import (  # noqa: E402
     Configuration,
     DataKey,
     Dtype,
@@ -37,9 +61,9 @@ from .documents.event_descriptor import (
     LimitsRange,
     PerObjectHint,
 )
-from .documents.event_page import EventPage, PartialEventPage
-from .documents.resource import PartialResource, Resource
-from .documents.run_start import (
+from .documents.event_page import EventPage, PartialEventPage  # noqa: E402
+from .documents.resource import PartialResource, Resource  # noqa: E402
+from .documents.run_start import (  # noqa: E402
     CalculatedEventProjection,
     Calculation,
     ConfigurationProjection,
@@ -49,9 +73,9 @@ from .documents.run_start import (
     RunStart,
     StaticProjection,
 )
-from .documents.run_stop import RunStop
-from .documents.stream_datum import StreamDatum, StreamRange
-from .documents.stream_resource import StreamResource
+from .documents.run_stop import RunStop  # noqa: E402
+from .documents.stream_datum import StreamDatum, StreamRange  # noqa: E402
+from .documents.stream_resource import StreamResource  # noqa: E402
 
 __all__ = [
     # Document types
@@ -89,21 +113,6 @@ __all__ = [
     "compose_run",
     "__version__",
 ]
-
-
-class DocumentNames(Enum):
-    stop = "stop"
-    start = "start"
-    descriptor = "descriptor"
-    event = "event"
-    datum = "datum"
-    resource = "resource"
-    event_page = "event_page"
-    datum_page = "datum_page"
-    stream_resource = "stream_resource"
-    stream_datum = "stream_datum"
-    bulk_datum = "bulk_datum"  # deprecated
-    bulk_events = "bulk_events"  # deprecated
 
 
 class DocumentRouter:
