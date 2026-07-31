@@ -5,7 +5,6 @@ import inspect
 import itertools
 import json
 import os
-import sys
 import threading
 import time as ttime
 import uuid
@@ -24,35 +23,12 @@ from typing import (
 import jsonschema
 import numpy
 
-# TODO: remove backport when Python 3.10 support is dropped
-if sys.version_info >= (3, 11):
-    from enum import StrEnum
-else:
-    from ._strenum_backport import StrEnum
-
-
-class DocumentNames(StrEnum):
-    stop = "stop"
-    start = "start"
-    descriptor = "descriptor"
-    event = "event"
-    datum = "datum"
-    resource = "resource"
-    event_page = "event_page"
-    datum_page = "datum_page"
-    stream_resource = "stream_resource"
-    stream_datum = "stream_datum"
-    bulk_datum = "bulk_datum"  # deprecated
-    bulk_events = "bulk_events"  # deprecated
-
-
-# Imported below DocumentNames because the generated documents package reads it
-# back off this module while this module is still initialising.
-from ._version import __version__  # noqa: E402
-from .documents.datum import Datum  # noqa: E402
-from .documents.datum_page import DatumPage  # noqa: E402
-from .documents.event import Event, PartialEvent  # noqa: E402
-from .documents.event_descriptor import (  # noqa: E402
+from ._version import __version__
+from .document_names import DocumentNames
+from .documents.datum import Datum
+from .documents.datum_page import DatumPage
+from .documents.event import Event, PartialEvent
+from .documents.event_descriptor import (
     Configuration,
     DataKey,
     Dtype,
@@ -61,9 +37,9 @@ from .documents.event_descriptor import (  # noqa: E402
     LimitsRange,
     PerObjectHint,
 )
-from .documents.event_page import EventPage, PartialEventPage  # noqa: E402
-from .documents.resource import PartialResource, Resource  # noqa: E402
-from .documents.run_start import (  # noqa: E402
+from .documents.event_page import EventPage, PartialEventPage
+from .documents.resource import PartialResource, Resource
+from .documents.run_start import (
     CalculatedEventProjection,
     Calculation,
     ConfigurationProjection,
@@ -73,9 +49,9 @@ from .documents.run_start import (  # noqa: E402
     RunStart,
     StaticProjection,
 )
-from .documents.run_stop import RunStop  # noqa: E402
-from .documents.stream_datum import StreamDatum, StreamRange  # noqa: E402
-from .documents.stream_resource import StreamResource  # noqa: E402
+from .documents.run_stop import RunStop
+from .documents.stream_datum import StreamDatum, StreamRange
+from .documents.stream_resource import StreamResource
 
 __all__ = [
     # Document types

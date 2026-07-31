@@ -6,7 +6,7 @@ from typing import Generic, Literal, TypeVar
 # NamedTuple cannot yet be generic.
 from typing_extensions import NamedTuple
 
-from event_model import DocumentNames
+from event_model.document_names import DocumentNames
 
 from .datum import *  # noqa: F403
 from .datum_page import *  # noqa: F403
