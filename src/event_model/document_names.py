@@ -5,8 +5,10 @@ if sys.version_info >= (3, 11):
 else:
     from ._strenum_backport import StrEnum
 
+
 class DocumentNames(StrEnum):
     """StrEnum of the names of all documents in the event model."""
+
     stop = "stop"
     start = "start"
     descriptor = "descriptor"
@@ -19,5 +21,6 @@ class DocumentNames(StrEnum):
     stream_datum = "stream_datum"
     bulk_datum = "bulk_datum"  # deprecated
     bulk_events = "bulk_events"  # deprecated
+
 
 __all__ = ["DocumentNames"]
